@@ -1,5 +1,20 @@
 # Curso Angular 20 Avanzado
 
+## 🚨 INICIO RÁPIDO PARA ESTUDIANTES
+
+### 📥 **Clonar desde Tag Inicial (OBLIGATORIO)**
+```bash
+git clone --branch v0.0.0 https://github.com/Imagina-Formacion/curso-angular-20-avanzado.git
+```
+
+### 📋 **Requisitos y Setup**
+- 📖 **[LEER PRIMERO: Requisitos Iniciales](./docs/REQUISITOS-INICIALES.md)** ⚠️
+- 🔧 Node.js >= 20.11.1, npm >= 10.0.0
+- 🖥️ VS Code con extensiones recomendadas
+- ⚡ Setup automático: `npm run setup:complete`
+
+---
+
 ## 📋 Información del Curso
 
 - **Duración:** 25 horas distribuidas en 9 sesiones
