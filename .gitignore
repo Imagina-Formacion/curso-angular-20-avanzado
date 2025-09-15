@@ -1,0 +1,147 @@
+# Dependencies - NUNCA subir node_modules de ninguna ubicación
+node_modules/
+**/node_modules/
+*/node_modules/
+campus-virtual-eso/node_modules/
+campus-ui-library/node_modules/
+sesiones/*/node_modules/
+*/*/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage
+.grunt
+
+# Bower dependency directory
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons
+build/Release
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+.env.test
+.env.local
+.env.production
+
+# parcel-bundler cache
+.cache
+.parcel-cache
+
+# next.js build output
+.next
+
+# nuxt.js build output
+.nuxt
+
+# gatsby files
+.cache/
+public
+
+# Storybook build outputs
+.out
+.storybook-out
+
+# Temporary folders
+tmp/
+temp/
+
+# Logs
+logs
+*.log
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Angular specific
+/*/dist/
+/*/tmp/
+/*/out-tsc/
+/*/.angular/
+/*/bazel-out/
+
+# Compiled output per session
+/00-proyecto-inicial/campus-virtual-app/dist/
+/01-sesion-fundamentos/*/dist/
+/02-sesion-reactividad/*/dist/
+/03-sesion-formularios-di/*/dist/
+/04-sesion-routing-optimizacion/*/dist/
+/05-sesion-ssr-testing/*/dist/
+/06-sesion-arquitecturas/*/dist/
+/07-sesion-estado-i18n/*/dist/
+/08-sesion-librerias-buenas-practicas/*/dist/
+/09-sesion-migracion-proyecto/*/dist/
+
+# Testing
+/*/coverage/
+/*/karma/
+
+# Course specific files
+backup/
+*.backup
+.curso-temp/
+screenshots/
+recordings/
+
+# OS generated files
+*/.DS_Store
+*/Thumbs.db

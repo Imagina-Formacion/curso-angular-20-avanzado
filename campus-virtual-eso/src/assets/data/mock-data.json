@@ -1,0 +1,108 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "María García Rodríguez",
+      "email": "maria.garcia@eso.edu",
+      "role": "student",
+      "course": "3º ESO A",
+      "avatar": "/assets/images/users/maria.jpg",
+      "subjects": [
+        "Matemáticas",
+        "Lengua",
+        "Ciencias"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Juan Rodríguez López",
+      "email": "juan.rodriguez@eso.edu",
+      "role": "teacher",
+      "subjects": [
+        "Matemáticas",
+        "Física"
+      ],
+      "avatar": "/assets/images/users/juan.jpg",
+      "courses": [
+        1,
+        3
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Ana López Martín",
+      "email": "ana.lopez@eso.edu",
+      "role": "admin",
+      "permissions": [
+        "all"
+      ],
+      "avatar": "/assets/images/users/ana.jpg"
+    },
+    {
+      "id": 4,
+      "name": "Carmen Ruiz Sánchez",
+      "email": "carmen.ruiz@eso.edu",
+      "role": "teacher",
+      "subjects": [
+        "Lengua",
+        "Literatura"
+      ],
+      "avatar": "/assets/images/users/carmen.jpg",
+      "courses": [
+        2
+      ]
+    }
+  ],
+  "courses": [
+    {
+      "id": 1,
+      "name": "Matemáticas 3º ESO",
+      "teacher": "Juan Rodríguez",
+      "teacherId": 2,
+      "students": 25,
+      "description": "Álgebra y geometría para 3º ESO",
+      "image": "/assets/images/courses/matematicas.jpg",
+      "schedule": "Lunes, Miércoles, Viernes 10:00-11:00"
+    },
+    {
+      "id": 2,
+      "name": "Lengua 3º ESO",
+      "teacher": "Carmen Ruiz",
+      "teacherId": 4,
+      "students": 22,
+      "description": "Literatura y expresión escrita",
+      "image": "/assets/images/courses/lengua.jpg",
+      "schedule": "Martes, Jueves 09:00-10:00"
+    },
+    {
+      "id": 3,
+      "name": "Física 4º ESO",
+      "teacher": "Juan Rodríguez",
+      "teacherId": 2,
+      "students": 18,
+      "description": "Conceptos fundamentales de física",
+      "image": "/assets/images/courses/fisica.jpg",
+      "schedule": "Lunes, Miércoles 11:00-12:00"
+    }
+  ],
+  "messages": [
+    {
+      "id": 1,
+      "from": 2,
+      "to": 1,
+      "subject": "Tarea de matemáticas",
+      "content": "Recuerda entregar los ejercicios del tema 3 antes del viernes.",
+      "date": "2025-01-15",
+      "read": false
+    },
+    {
+      "id": 2,
+      "from": 1,
+      "to": 2,
+      "subject": "Consulta sobre examen",
+      "content": "¿Podrías explicarme el ejercicio 5 de la página 42?",
+      "date": "2025-01-14",
+      "read": true
+    }
+  ]
+}

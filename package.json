@@ -1,0 +1,42 @@
+{
+  "name": "curso-angular-20-avanzado",
+  "version": "1.0.0",
+  "description": "Curso Angular 20 Avanzado - Campus Virtual ESO | Imagina Formación",
+  "main": "setup-complete.js",
+  "scripts": {
+    "setup:complete": "node setup-complete.js",
+    "verify:setup": "node verify-setup.js",
+    "setup": "node setup-complete.js",
+    "verify": "node verify-setup.js"
+  },
+  "keywords": [
+    "angular",
+    "angular20",
+    "curso",
+    "campus-virtual",
+    "eso",
+    "formacion",
+    "imagina",
+    "typescript",
+    "signals",
+    "standalone-components"
+  ],
+  "author": "Imagina Formación",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Imagina-Formacion/curso-angular-20-avanzado.git"
+  },
+  "dependencies": {
+    "inquirer": "^8.2.6",
+    "ora": "^5.4.1",
+    "chalk": "^4.1.2",
+    "boxen": "^5.1.2",
+    "fs-extra": "^11.0.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  }
+}
