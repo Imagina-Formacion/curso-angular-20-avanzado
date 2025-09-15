@@ -1,0 +1,49 @@
+# Ejercicios - Sesión 02
+
+## 🎯 Ejercicios Prácticos
+
+### Ejercicio 1: Change Detection Avanzado
+
+**Objetivo:** Implementar Change Detection Avanzado en el Campus Virtual
+
+**Pasos:**
+1. [ ] Paso 1
+2. [ ] Paso 2  
+3. [ ] Paso 3
+
+**Criterios de éxito:**
+- ✅ Criterio 1
+- ✅ Criterio 2
+
+
+
+### Ejercicio 2: Directivas y Control Flow
+
+**Objetivo:** Implementar Directivas y Control Flow en el Campus Virtual
+
+**Pasos:**
+1. [ ] Paso 1
+2. [ ] Paso 2
+3. [ ] Paso 3
+
+**Criterios de éxito:**
+- ✅ Criterio 1  
+- ✅ Criterio 2
+
+
+## 🚀 Comandos Útiles
+
+```bash
+# Verificar progreso
+npm run verify:setup
+
+# Ejecutar tests
+npm test
+
+# Iniciar desarrollo
+npm start
+```
+
+---
+
+**Tiempo estimado:** 45-60 minutos por ejercicio

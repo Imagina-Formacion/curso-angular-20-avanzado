@@ -1,0 +1,20 @@
+{
+  "id": "01",
+  "title": "Fundamentos Modernos",
+  "topics": [
+    "Novedades Angular 20",
+    "Signals en Profundidad"
+  ],
+  "duration": "3 horas",
+  "objectives": [
+    "Novedades Angular 20",
+    "Signals en Profundidad"
+  ],
+  "prerequisites": [
+    "Node.js v20+",
+    "Angular CLI 20",
+    "VS Code"
+  ],
+  "newDependencies": [],
+  "commands": []
+}

@@ -228,6 +228,22 @@ class SessionManager {
   async installSessionDependencies(dependencies) {
     if (!dependencies || dependencies.length === 0) return;
 
+    // ✅ CRÍTICO: Verificar Node.js v20+ antes de instalar dependencias Angular 20
+    const nodeVersion = process.version.slice(1);
+    if (this.compareVersions(nodeVersion, '20.11.1') < 0) {
+      this.spinner.fail('Node.js insuficiente para Angular 20');
+      throw new Error(`
+❌ CRÍTICO: Angular 20 requiere Node.js v20.11.1+
+🔴 Tu versión: ${nodeVersion}
+🔴 Node.js v18 ya NO es soportado (EOL: 27 marzo 2025)
+
+🔧 MIGRAR Node.js:
+   npm run migrate:node
+
+⚠️  Sin Node.js v20+ las dependencias de Angular 20 FALLARÁN.
+      `);
+    }
+
     this.spinner.start('Instalando nuevas dependencias...');
 
     try {
@@ -359,6 +375,21 @@ class SessionManager {
         borderColor: 'blue'
       }
     ));
+  }
+
+  compareVersions(version1, version2) {
+    const v1 = version1.split('.').map(Number);
+    const v2 = version2.split('.').map(Number);
+
+    for (let i = 0; i < Math.max(v1.length, v2.length); i++) {
+      const part1 = v1[i] || 0;
+      const part2 = v2[i] || 0;
+
+      if (part1 < part2) return -1;
+      if (part1 > part2) return 1;
+    }
+
+    return 0;
   }
 }
 

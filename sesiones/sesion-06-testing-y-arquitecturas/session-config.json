@@ -1,0 +1,24 @@
+{
+  "id": "06",
+  "title": "Testing y Arquitecturas",
+  "topics": [
+    "Testing Moderno",
+    "Arquitecturas Escalables",
+    "PWAs"
+  ],
+  "duration": "3 horas",
+  "objectives": [
+    "Testing Moderno",
+    "Arquitecturas Escalables",
+    "PWAs"
+  ],
+  "prerequisites": [
+    "Sesión 5 completada"
+  ],
+  "newDependencies": [
+    "@angular/service-worker"
+  ],
+  "commands": [
+    "ng add @angular/pwa"
+  ]
+}

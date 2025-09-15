@@ -1,0 +1,20 @@
+{
+  "id": "05",
+  "title": "SSR e Hydration",
+  "topics": [
+    "SSR, Prerender e Hydration"
+  ],
+  "duration": "3 horas",
+  "objectives": [
+    "SSR, Prerender e Hydration"
+  ],
+  "prerequisites": [
+    "Sesión 4 completada"
+  ],
+  "newDependencies": [
+    "@angular/ssr"
+  ],
+  "commands": [
+    "ng add @angular/ssr"
+  ]
+}

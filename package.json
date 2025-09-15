@@ -4,10 +4,15 @@
   "description": "Curso Angular 20 Avanzado - Campus Virtual ESO | Imagina Formación",
   "main": "setup-complete.js",
   "scripts": {
-    "setup:complete": "node setup-complete.js",
-    "verify:setup": "node verify-setup.js",
-    "setup": "node setup-complete.js",
-    "verify": "node verify-setup.js"
+    "setup:complete": "node scripts/setup-complete.js",
+    "verify:setup": "node scripts/verify-setup.js",
+    "setup": "node scripts/setup-complete.js",
+    "verify": "node scripts/verify-setup.js",
+    "check:requirements": "node scripts/verificacion/check-requirements.js",
+    "extensions:install": "node scripts/utilities/install-extensions.js",
+    "migrate:node": "node scripts/utilities/migration-helper.js",
+    "session:start": "node scripts/session-manager.js start",
+    "session:reset": "node scripts/session-manager.js reset"
   },
   "keywords": [
     "angular",
@@ -36,7 +41,7 @@
   },
   "devDependencies": {},
   "engines": {
-    "node": ">=20.0.0",
+    "node": ">=20.11.1",
     "npm": ">=10.0.0"
   }
 }

@@ -1,0 +1,25 @@
+{
+  "id": "07",
+  "title": "Estado Global e i18n",
+  "topics": [
+    "NgRx",
+    "Internacionalización",
+    "Librerías"
+  ],
+  "duration": "3 horas",
+  "objectives": [
+    "NgRx",
+    "Internacionalización",
+    "Librerías"
+  ],
+  "prerequisites": [
+    "Sesión 6 completada"
+  ],
+  "newDependencies": [
+    "@ngrx/store",
+    "@ngrx/effects"
+  ],
+  "commands": [
+    "ng add @ngrx/store"
+  ]
+}

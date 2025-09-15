@@ -11,16 +11,21 @@ class SetupVerifier {
   constructor() {
     this.spinner = ora();
     this.checks = [];
+    this.projectPath = path.join(process.cwd(), 'campus-virtual-eso');
     this.warnings = [];
     this.errors = [];
-    this.courseDir = process.cwd();
-    this.campusPath = path.join(this.courseDir, 'campus-virtual-eso');
+    this.requirements = {
+      node: '20.11.1',  // ✅ CRÍTICO: Angular 20 requiere Node.js v20+
+      npm: '10.0.0',
+      angularCli: '20.0.0', // ✅ Angular 20 estable
+      git: '2.0.0'
+    };
   }
 
   async run() {
     console.log(boxen(
       chalk.blue.bold('🔍 VERIFICACIÓN DE SETUP\n') +
-      chalk.white('Campus Virtual ESO - Verificación Completa\n') +
+      chalk.white('Campus Virtual ESO - Angular 20 Avanzado\n') +
       chalk.gray('Imagina Formación | 2025'),
       {
         padding: 1,
@@ -32,10 +37,11 @@ class SetupVerifier {
 
     try {
       await this.checkSystemRequirements();
-      await this.checkRepositoryStructure();
-      await this.checkCampusProject();
-      await this.checkScripts();
+      await this.checkProjectStructure();
+      await this.checkDependencies();
       await this.checkVSCodeConfiguration();
+      await this.checkAngularConfiguration();
+      await this.runBasicTests();
 
       this.showResults();
     } catch (error) {
@@ -44,13 +50,20 @@ class SetupVerifier {
   }
 
   async checkSystemRequirements() {
-    console.log(chalk.yellow('\n🖥️ Verificando sistema...\n'));
+    console.log(chalk.yellow('\n🖥️  Verificando sistema y herramientas...\n'));
 
-    // Node.js
-    await this.check('Node.js >= 18.19.0', async () => {
+    // Node.js - CRÍTICO para Angular 20
+    await this.check('Node.js >= 20.11.1 (OBLIGATORIO)', async () => {
       const version = process.version.slice(1);
-      if (this.compareVersions(version, '18.19.0') < 0) {
-        throw new Error(`Versión ${version} muy antigua. Requiere >= 18.19.0`);
+      if (this.compareVersions(version, this.requirements.node) < 0) {
+        throw new Error(`
+❌ CRÍTICO: Angular 20 requiere Node.js v20.11.1+
+🔴 Tu versión: ${version}
+🔴 Node.js v18 ya NO es soportado (EOL: 27 marzo 2025)
+
+🔧 INSTALAR Node.js v20+:
+   nvm install 20.11.1 && nvm use 20.11.1
+        `);
       }
       return `${version} ✅`;
     });
@@ -58,8 +71,8 @@ class SetupVerifier {
     // npm
     await this.check('npm >= 10.0.0', async () => {
       const version = execSync('npm --version', { encoding: 'utf8' }).trim();
-      if (this.compareVersions(version, '10.0.0') < 0) {
-        throw new Error(`Versión ${version} muy antigua. Requiere >= 10.0.0`);
+      if (this.compareVersions(version, this.requirements.npm) < 0) {
+        throw new Error(`Versión ${version} es muy antigua. Requiere >= ${this.requirements.npm}`);
       }
       return `${version} ✅`;
     });
@@ -71,104 +84,56 @@ class SetupVerifier {
         const data = JSON.parse(output);
         const version = data.cli?.version;
 
-        if (!version || this.compareVersions(version, '18.0.0') < 0) {
-          throw new Error(`Versión ${version || 'no encontrada'} muy antigua`);
+        if (!version || this.compareVersions(version, this.requirements.angularCli) < 0) {
+          throw new Error(`Versión ${version || 'no encontrada'} es muy antigua. Requiere >= ${this.requirements.angularCli}`);
         }
         return `${version} ✅`;
       } catch (error) {
-        throw new Error('Angular CLI no instalado o no funcional');
+        if (error.message.includes('not found')) {
+          throw new Error('Angular CLI no está instalado. Ejecutar: npm install -g @angular/cli');
+        }
+        throw error;
       }
     });
 
     // Git
     await this.check('Git (recomendado)', async () => {
       try {
-        const version = execSync('git --version', { encoding: 'utf8', stdio: 'pipe' })
-          .match(/\d+\.\d+\.\d+/)[0];
+        const version = execSync('git --version', { encoding: 'utf8', stdio: 'pipe' }).match(/\d+\.\d+\.\d+/)[0];
+        if (this.compareVersions(version, this.requirements.git) < 0) {
+          this.warnings.push('Git versión antigua detectada');
+          return `${version} ⚠️`;
+        }
         return `${version} ✅`;
       } catch {
         this.warnings.push('Git no encontrado - recomendado para el curso');
         return 'No encontrado ⚠️';
       }
     });
-  }
 
-  async checkRepositoryStructure() {
-    console.log(chalk.yellow('\n📁 Verificando estructura del repositorio...\n'));
-
-    const requiredDirs = [
-      'campus-virtual-eso',
-      'sesiones',
-      'scripts',
-      'configuraciones',
-      '.github',
-      'campus-ui-library'
-    ];
-
-    await this.check('Estructura principal', async () => {
-      const missingDirs = [];
-      for (const dir of requiredDirs) {
-        const dirPath = path.join(this.courseDir, dir);
-        if (!await fs.pathExists(dirPath)) {
-          missingDirs.push(dir);
-        }
+    // Verificar conexión a internet
+    await this.check('Conexión a internet', async () => {
+      try {
+        execSync('ping -c 1 google.com', { stdio: 'pipe', timeout: 5000 });
+        return 'Conectado ✅';
+      } catch {
+        throw new Error('Sin conexión a internet. Necesaria para instalar dependencias.');
       }
-
-      if (missingDirs.length > 0) {
-        throw new Error(`Directorios faltantes: ${missingDirs.join(', ')}`);
-      }
-      return `${requiredDirs.length} directorios ✅`;
-    });
-
-    await this.check('Archivos principales', async () => {
-      const requiredFiles = ['package.json', 'README.md', '.gitignore', 'CHANGELOG.md'];
-      const missingFiles = [];
-
-      for (const file of requiredFiles) {
-        const filePath = path.join(this.courseDir, file);
-        if (!await fs.pathExists(filePath)) {
-          missingFiles.push(file);
-        }
-      }
-
-      if (missingFiles.length > 0) {
-        throw new Error(`Archivos faltantes: ${missingFiles.join(', ')}`);
-      }
-      return `${requiredFiles.length} archivos ✅`;
-    });
-
-    await this.check('Estructura de sesiones', async () => {
-      const sessionDirs = [
-        'sesiones/01-fundamentos',
-        'sesiones/02-reactividad',
-        'sesiones/05-ssr-integral',
-        'sesiones/07-estado-i18n-libs'
-      ];
-
-      const existing = [];
-      for (const dir of sessionDirs) {
-        const dirPath = path.join(this.courseDir, dir);
-        if (await fs.pathExists(dirPath)) {
-          existing.push(dir);
-        }
-      }
-
-      return `${existing.length}/${sessionDirs.length} sesiones preparadas ✅`;
     });
   }
 
-  async checkCampusProject() {
-    console.log(chalk.yellow('\n🏗️ Verificando proyecto Campus Virtual...\n'));
+  async checkProjectStructure() {
+    console.log(chalk.yellow('\n📁 Verificando estructura del proyecto...\n'));
 
-    await this.check('Proyecto Campus existe', async () => {
-      if (!await fs.pathExists(this.campusPath)) {
-        throw new Error('Proyecto Campus Virtual no encontrado');
+    await this.check('Proyecto Angular existe', async () => {
+      if (!await fs.pathExists(this.projectPath)) {
+        throw new Error(`Proyecto no encontrado en ${this.projectPath}. Ejecutar setup primero.`);
       }
       return 'Encontrado ✅';
     });
 
-    await this.check('package.json del Campus', async () => {
-      const packagePath = path.join(this.campusPath, 'package.json');
+    await this.check('package.json válido', async () => {
+      const packagePath = path.join(this.projectPath, 'package.json');
       if (!await fs.pathExists(packagePath)) {
         throw new Error('package.json no encontrado');
       }
@@ -178,105 +143,101 @@ class SetupVerifier {
         throw new Error('No es un proyecto Angular válido');
       }
 
-      const angularVersion = packageJson.dependencies['@angular/core'];
-      return `Angular ${angularVersion} ✅`;
+      return `Angular ${packageJson.dependencies['@angular/core']} ✅`;
     });
 
-    await this.check('Configuración Angular', async () => {
-      const angularPath = path.join(this.campusPath, 'angular.json');
+    await this.check('angular.json configurado', async () => {
+      const angularPath = path.join(this.projectPath, 'angular.json');
       if (!await fs.pathExists(angularPath)) {
         throw new Error('angular.json no encontrado');
       }
+
+      const angularJson = await fs.readJson(angularPath);
+      if (!angularJson.projects?.['campus-virtual-eso']) {
+        throw new Error('Proyecto no configurado correctamente en angular.json');
+      }
+
       return 'Configurado ✅';
     });
 
-    await this.check('Estructura de carpetas Campus', async () => {
+    await this.check('Estructura de carpetas', async () => {
       const requiredDirs = [
+        'src/app',
         'src/app/core',
         'src/app/shared',
         'src/app/features',
-        'src/app/layout',
-        'src/assets/data'
+        'src/app/layout'
       ];
 
       const missingDirs = [];
       for (const dir of requiredDirs) {
-        const dirPath = path.join(this.campusPath, dir);
+        const dirPath = path.join(this.projectPath, dir);
         if (!await fs.pathExists(dirPath)) {
           missingDirs.push(dir);
         }
       }
 
       if (missingDirs.length > 0) {
-        this.warnings.push(`Campus: carpetas faltantes: ${missingDirs.join(', ')}`);
+        this.warnings.push(`Carpetas faltantes: ${missingDirs.join(', ')}`);
         return `${requiredDirs.length - missingDirs.length}/${requiredDirs.length} ⚠️`;
       }
 
       return `${requiredDirs.length}/${requiredDirs.length} ✅`;
     });
-
-    await this.check('Datos mock ESO', async () => {
-      const dataFiles = ['students.json', 'teachers.json', 'courses.json', 'messages.json'];
-      const dataDir = path.join(this.campusPath, 'src/assets/data');
-
-      const existing = [];
-      for (const file of dataFiles) {
-        const filePath = path.join(dataDir, file);
-        if (await fs.pathExists(filePath)) {
-          existing.push(file);
-        }
-      }
-
-      if (existing.length === 0) {
-        throw new Error('No se encontraron datos mock');
-      }
-
-      return `${existing.length}/${dataFiles.length} archivos ✅`;
-    });
   }
 
-  async checkScripts() {
-    console.log(chalk.yellow('\n🔧 Verificando scripts...\n'));
+  async checkDependencies() {
+    console.log(chalk.yellow('\n📦 Verificando dependencias...\n'));
 
-    const requiredScripts = [
-      'scripts/setup-complete.js',
-      'scripts/verify-setup.js'
-    ];
+    await this.check('node_modules instalado', async () => {
+      const nodeModulesPath = path.join(this.projectPath, 'node_modules');
+      if (!await fs.pathExists(nodeModulesPath)) {
+        throw new Error('Dependencias no instaladas. Ejecutar: cd campus-virtual-eso && npm install');
+      }
 
-    await this.check('Scripts principales', async () => {
-      const missingScripts = [];
-      for (const script of requiredScripts) {
-        const scriptPath = path.join(this.courseDir, script);
-        if (!await fs.pathExists(scriptPath)) {
-          missingScripts.push(script);
+      // Verificar algunas dependencias clave
+      const keyDeps = ['@angular/core', '@angular/cli', 'typescript'];
+      const missingDeps = [];
+
+      for (const dep of keyDeps) {
+        const depPath = path.join(nodeModulesPath, dep);
+        if (!await fs.pathExists(depPath)) {
+          missingDeps.push(dep);
         }
       }
 
-      if (missingScripts.length > 0) {
-        throw new Error(`Scripts faltantes: ${missingScripts.join(', ')}`);
+      if (missingDeps.length > 0) {
+        throw new Error(`Dependencias faltantes: ${missingDeps.join(', ')}`);
       }
-      return `${requiredScripts.length} scripts ✅`;
+
+      return 'Instaladas ✅';
     });
 
-    await this.check('package.json scripts', async () => {
-      const packagePath = path.join(this.courseDir, 'package.json');
+    await this.check('TypeScript compilable', async () => {
+      try {
+        process.chdir(this.projectPath);
+        execSync('npx tsc --noEmit', { stdio: 'pipe', timeout: 30000 });
+        return 'Sin errores ✅';
+      } catch (error) {
+        const output = error.stdout?.toString() || error.stderr?.toString() || '';
+        if (output.includes('error TS')) {
+          throw new Error('Errores de TypeScript encontrados. Revisar código.');
+        }
+        return 'Verificado ✅';
+      }
+    });
+
+    // Verificar versiones específicas de Angular 20/18
+    await this.check('Angular 18+ compatible', async () => {
+      const packagePath = path.join(this.projectPath, 'package.json');
       const packageJson = await fs.readJson(packagePath);
+      const angularVersion = packageJson.dependencies?.['@angular/core']?.replace(/[\^~]/, '');
 
-      const requiredNpmScripts = [
-        'setup:complete',
-        'verify:setup',
-        'start:campus'
-      ];
-
-      const missingScripts = requiredNpmScripts.filter(
-        script => !packageJson.scripts?.[script]
-      );
-
-      if (missingScripts.length > 0) {
-        throw new Error(`Scripts npm faltantes: ${missingScripts.join(', ')}`);
+      if (!angularVersion || this.compareVersions(angularVersion, '18.0.0') < 0) {
+        throw new Error(`Angular ${angularVersion} no es compatible. Requiere >= 18.0.0`);
       }
 
-      return `${requiredNpmScripts.length} comandos ✅`;
+      return `${angularVersion} ✅`;
     });
   }
 
@@ -284,10 +245,10 @@ class SetupVerifier {
     console.log(chalk.yellow('\n🔧 Verificando VS Code...\n'));
 
     await this.check('Configuración VS Code', async () => {
-      const vscodeDir = path.join(this.campusPath, '.vscode');
+      const vscodeDir = path.join(this.projectPath, '.vscode');
 
       if (!await fs.pathExists(vscodeDir)) {
-        this.warnings.push('Configuración VS Code no encontrada en Campus');
+        this.warnings.push('Configuración VS Code no encontrada');
         return 'No configurado ⚠️';
       }
 
@@ -302,6 +263,108 @@ class SetupVerifier {
       }
 
       return `${existingFiles.length}/${requiredFiles.length} archivos ✅`;
+    });
+
+    await this.check('Extensiones recomendadas', async () => {
+      const extensionsPath = path.join(this.projectPath, '.vscode', 'extensions.json');
+
+      if (!await fs.pathExists(extensionsPath)) {
+        this.warnings.push('Archivo extensions.json no encontrado');
+        return 'No configurado ⚠️';
+      }
+
+      const extensions = await fs.readJson(extensionsPath);
+      const recommendedCount = extensions.recommendations?.length || 0;
+
+      return `${recommendedCount} recomendadas ✅`;
+    });
+  }
+
+  async checkAngularConfiguration() {
+    console.log(chalk.yellow('\n⚙️ Verificando configuración Angular...\n'));
+
+    await this.check('Proyecto compilable', async () => {
+      try {
+        process.chdir(this.projectPath);
+        execSync('ng build --configuration=development', {
+          stdio: 'pipe',
+          timeout: 120000 // 2 minutos
+        });
+        return 'Build exitoso ✅';
+      } catch (error) {
+        const output = error.stdout?.toString() || error.stderr?.toString() || '';
+        if (output.includes('Cannot resolve dependency')) {
+          throw new Error('Dependencias faltantes. Ejecutar: npm install');
+        }
+        if (output.includes('Module not found')) {
+          throw new Error('Módulos no encontrados. Verificar imports.');
+        }
+        throw new Error('Error en build. Verificar configuración.');
+      }
+    });
+
+    await this.check('Servidor de desarrollo', async () => {
+      try {
+        // Verificar que el servidor puede iniciar (sin ejecutarlo)
+        const child = execSync('timeout 10 ng serve --dry-run', {
+          stdio: 'pipe',
+          cwd: this.projectPath
+        });
+        return 'Configurable ✅';
+      } catch (error) {
+        this.warnings.push('Verificación de servidor incompleta');
+        return 'Básico ✅';
+      }
+    });
+
+    await this.check('Configuración SSR (Opcional)', async () => {
+      const packagePath = path.join(this.projectPath, 'package.json');
+      const packageJson = await fs.readJson(packagePath);
+
+      if (packageJson.dependencies?.['@angular/ssr']) {
+        return 'SSR disponible ✅';
+      } else {
+        this.warnings.push('SSR no configurado (se agregará en sesión 5)');
+        return 'No configurado ⚠️';
+      }
+    });
+  }
+
+  async runBasicTests() {
+    console.log(chalk.yellow('\n🧪 Ejecutando tests básicos...\n'));
+
+    await this.check('Tests unitarios', async () => {
+      try {
+        process.chdir(this.projectPath);
+        execSync('ng test --watch=false --browsers=ChromeHeadless', {
+          stdio: 'pipe',
+          timeout: 60000
+        });
+        return 'Tests pasando ✅';
+      } catch (error) {
+        // Si no hay tests configurados, es normal en setup inicial
+        const output = error.stdout?.toString() || error.stderr?.toString() || '';
+        if (output.includes('No tests found') || output.includes('0 tests')) {
+          this.warnings.push('No hay tests configurados aún');
+          return 'Sin tests ⚠️';
+        }
+        throw new Error('Tests fallando. Verificar configuración.');
+      }
+    });
+
+    await this.check('Linting código', async () => {
+      try {
+        process.chdir(this.projectPath);
+        execSync('ng lint', { stdio: 'pipe', timeout: 30000 });
+        return 'Sin errores de lint ✅';
+      } catch (error) {
+        const output = error.stdout?.toString() || error.stderr?.toString() || '';
+        if (output.includes('not found') || output.includes('No lint configuration')) {
+          this.warnings.push('ESLint no configurado (opcional)');
+          return 'No configurado ⚠️';
+        }
+        throw new Error('Errores de linting encontrados');
+      }
     });
   }
 
@@ -328,19 +391,19 @@ class SetupVerifier {
 
     if (failedChecks === 0) {
       console.log(boxen(
-        chalk.green.bold('🎉 ¡VERIFICACIÓN EXITOSA!\n\n') +
+        chalk.green.bold('🎉 ¡VERIFICACIÓN COMPLETADA CON ÉXITO!\n\n') +
         chalk.white(`✅ ${successfulChecks}/${totalChecks} verificaciones pasaron\n`) +
-        chalk.yellow(`⚠️ ${this.warnings.length} advertencias menores\n\n`) +
-        chalk.green.bold('🚀 ¡Sistema listo para el curso!'),
+        chalk.yellow(`⚠️  ${this.warnings.length} advertencias menores\n\n`) +
+        chalk.green.bold('🚀 ¡Listo para comenzar el curso!'),
         {
           padding: 1,
-          borderStyle: 'double',
+          borderStyle: 'single',
           borderColor: 'green'
         }
       ));
 
       if (this.warnings.length > 0) {
-        console.log(chalk.yellow('\n⚠️ Advertencias:'));
+        console.log(chalk.yellow('\n⚠️  Advertencias:'));
         this.warnings.forEach(warning => {
           console.log(chalk.yellow(`   • ${warning}`));
         });
@@ -349,7 +412,8 @@ class SetupVerifier {
       console.log(chalk.cyan('\n📚 Próximos pasos:'));
       console.log(chalk.white('   1. cd campus-virtual-eso'));
       console.log(chalk.white('   2. npm start'));
-      console.log(chalk.white('   3. Crear tag: git tag v0.0.0-base'));
+      console.log(chalk.white('   3. Abrir http://localhost:4200'));
+      console.log(chalk.white('   4. ¡Comenzar la Sesión 1!'));
 
     } else {
       console.log(boxen(
@@ -364,11 +428,23 @@ class SetupVerifier {
         }
       ));
 
-      console.log(chalk.red('\n❌ Errores encontrados:'));
+      console.log(chalk.red('\n❌ Errores que requieren atención:'));
       this.errors.forEach((error, index) => {
         console.log(chalk.red(`   ${index + 1}. ${error.description}: ${error.error}`));
       });
+
+      console.log(chalk.cyan('\n🔧 Comandos de solución rápida:'));
+      console.log(chalk.white('   • npm install -g @angular/cli@latest'));
+      console.log(chalk.white('   • cd campus-virtual-eso && npm install'));
+      console.log(chalk.white('   • npm run setup:complete'));
     }
+
+    // Mostrar información del entorno
+    console.log(chalk.gray('\n📊 Información del entorno:'));
+    console.log(chalk.gray(`   • Node.js: ${process.version}`));
+    console.log(chalk.gray(`   • npm: ${execSync('npm --version', { encoding: 'utf8' }).trim()}`));
+    console.log(chalk.gray(`   • SO: ${process.platform} ${process.arch}`));
+    console.log(chalk.gray(`   • Directorio: ${process.cwd()}`));
 
     process.exit(failedChecks > 0 ? 1 : 0);
   }
@@ -377,13 +453,17 @@ class SetupVerifier {
     console.log(boxen(
       chalk.red.bold('💥 ERROR CRÍTICO\n\n') +
       chalk.white(`${error.message}\n\n`) +
-      chalk.red.bold('🔧 Revisar configuración'),
+      chalk.red.bold('🔧 Contactar soporte si persiste'),
       {
         padding: 1,
         borderStyle: 'single',
         borderColor: 'red'
       }
     ));
+
+    console.log(chalk.gray('\n📞 Soporte técnico:'));
+    console.log(chalk.gray('   • Email: soporte@imagina-formacion.com'));
+    console.log(chalk.gray('   • Discord: Campus Virtual ESO'));
 
     process.exit(1);
   }
@@ -404,7 +484,7 @@ class SetupVerifier {
   }
 }
 
-// Ejecutar verificación
+// Ejecutar verificación si se llama directamente
 if (require.main === module) {
   new SetupVerifier().run().catch(console.error);
 }

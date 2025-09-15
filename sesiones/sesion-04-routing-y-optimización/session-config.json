@@ -1,0 +1,18 @@
+{
+  "id": "04",
+  "title": "Routing y Optimización",
+  "topics": [
+    "Routing Avanzado",
+    "Optimización de Recursos"
+  ],
+  "duration": "3 horas",
+  "objectives": [
+    "Routing Avanzado",
+    "Optimización de Recursos"
+  ],
+  "prerequisites": [
+    "Sesión 3 completada"
+  ],
+  "newDependencies": [],
+  "commands": []
+}

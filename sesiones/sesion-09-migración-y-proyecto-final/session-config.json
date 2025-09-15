@@ -1,0 +1,18 @@
+{
+  "id": "09",
+  "title": "Migración y Proyecto Final",
+  "topics": [
+    "Migración Angular 17→20",
+    "Proyecto Final"
+  ],
+  "duration": "3 horas",
+  "objectives": [
+    "Migración Angular 17→20",
+    "Proyecto Final"
+  ],
+  "prerequisites": [
+    "Sesión 8 completada"
+  ],
+  "newDependencies": [],
+  "commands": []
+}

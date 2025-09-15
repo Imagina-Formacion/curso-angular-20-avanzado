@@ -11,8 +11,8 @@ const inquirer = require('inquirer');
 const COURSE_CONFIG = {
   projectName: 'campus-virtual-eso',
   projectDir: '.',  // Usar directorio actual
-  angularVersion: '18.0.0',
-  requiredNodeVersion: '18.19.0',  // Versión más realista
+  angularVersion: '20.0.0',  // ✅ ACTUALIZADO Angular 20
+  requiredNodeVersion: '20.11.1',  // ✅ CRÍTICO: Node.js v20+ obligatorio
   requiredNpmVersion: '10.0.0'
 };
 
@@ -46,6 +46,7 @@ class CourseSetup {
         await this.installDependencies();
         await this.createProjectStructure();
         await this.createInitialFiles();
+        await this.createSessionsStructure(); // ✅ NUEVO: Crear estructura de sesiones
       }
       
       this.showSuccessMessage();
@@ -57,16 +58,27 @@ class CourseSetup {
   async checkPrerequisites() {
     console.log(chalk.yellow('\n📋 Verificando prerequisitos del sistema...\n'));
 
-    // Node.js
-    this.spinner.start('Verificando Node.js...');
+    // Node.js - CRÍTICO: Angular 20 requiere Node.js v20+
+    this.spinner.start('Verificando Node.js v20+...');
     try {
       const nodeVersion = process.version.slice(1);
       if (this.compareVersions(nodeVersion, COURSE_CONFIG.requiredNodeVersion) < 0) {
-        throw new Error(`Node.js ${COURSE_CONFIG.requiredNodeVersion} o superior requerido. Actual: ${nodeVersion}`);
+        this.spinner.fail('Node.js insuficiente para Angular 20');
+        throw new Error(`
+❌ CRÍTICO: Angular 20 requiere Node.js v20.11.1+
+🔴 Tu versión: ${nodeVersion}
+🔴 Node.js v18 ya NO es soportado (EOL: 27 marzo 2025)
+
+🔧 SOLUCIÓN:
+1. Instalar Node.js v20+: https://nodejs.org/
+2. O usar nvm: nvm install 20.11.1 && nvm use 20.11.1
+3. Verificar: node --version
+
+⚠️  Sin Node.js v20+ el curso NO funcionará.
+        `);
       }
       this.spinner.succeed(`Node.js ${nodeVersion} ✅`);
     } catch (error) {
-      this.spinner.fail('Node.js insuficiente');
       throw error;
     }
 
@@ -359,6 +371,10 @@ class CourseSetup {
     try {
       await fs.writeJson(path.join(vscodeDir, 'settings.json'), settings, { spaces: 2 });
       await fs.writeJson(path.join(vscodeDir, 'extensions.json'), extensions, { spaces: 2 });
+      
+      // ✅ NUEVO: Crear snippets del curso Angular 20
+      await this.createAngular20Snippets(vscodeDir);
+      
       this.spinner.succeed('VS Code configurado ✅');
     } catch (error) {
       this.spinner.warn('VS Code no configurado (no crítico)');
@@ -611,6 +627,516 @@ El proyecto evoluciona progresivamente:
     console.log(chalk.white('   5. Cerrar VS Code y otros editores que puedan estar bloqueando archivos'));
     
     process.exit(1);
+  }
+
+  async createAngular20Snippets(vscodeDir) {
+    const snippetsDir = path.join(vscodeDir, 'snippets');
+    await fs.ensureDir(snippetsDir);
+
+    // 📄 1. Snippets para Componentes Angular 20
+    const componentSnippets = {
+      "Angular 20 Standalone Component": {
+        "prefix": "ng-component",
+        "body": [
+          "import { Component, signal, computed } from '@angular/core';",
+          "import { CommonModule } from '@angular/common';",
+          "",
+          "@Component({",
+          "  selector: 'app-${1:component-name}',",
+          "  standalone: true,",
+          "  imports: [CommonModule],",
+          "  template: `",
+          "    <div class=\"${1:component-name}\">",
+          "      <h2>{{title()}}</h2>",
+          "      $0",
+          "    </div>",
+          "  `,",
+          "  styles: [`",
+          "    .${1:component-name} {",
+          "      padding: 1rem;",
+          "    }",
+          "  `]",
+          "})",
+          "export class ${1/(.*)/${1:/pascalcase}/}Component {",
+          "  title = signal('${1:component-name}');",
+          "}"
+        ],
+        "description": "Componente standalone Angular 20 con Signals"
+      },
+      "Angular 20 SSR Component": {
+        "prefix": "ng-ssr-component",
+        "body": [
+          "import { Component, signal, PLATFORM_ID, inject } from '@angular/core';",
+          "import { isPlatformBrowser } from '@angular/common';",
+          "",
+          "@Component({",
+          "  selector: 'app-${1:component-name}',",
+          "  standalone: true,",
+          "  template: `",
+          "    @if (isBrowser()) {",
+          "      <div class=\"client-only\">",
+          "        $0",
+          "      </div>",
+          "    } @else {",
+          "      <div class=\"server-rendered\">",
+          "        Loading...",
+          "      </div>",
+          "    }",
+          "  `",
+          "})",
+          "export class ${1/(.*)/${1:/pascalcase}/}Component {",
+          "  private platformId = inject(PLATFORM_ID);",
+          "  isBrowser = signal(isPlatformBrowser(this.platformId));",
+          "}"
+        ],
+        "description": "Componente con SSR y Hydration para Angular 20"
+      }
+    };
+
+    // 📄 2. Snippets para Signals
+    const signalsSnippets = {
+      "Angular Signal": {
+        "prefix": "ng-signal",
+        "body": [
+          "${1:name} = signal<${2:type}>(${3:initialValue});"
+        ],
+        "description": "Signal básico de Angular"
+      },
+      "Angular Computed Signal": {
+        "prefix": "ng-computed",
+        "body": [
+          "${1:name} = computed(() => {",
+          "  return ${2:this.signal()};",
+          "});"
+        ],
+        "description": "Signal computado de Angular"
+      },
+      "Angular Effect": {
+        "prefix": "ng-effect",
+        "body": [
+          "effect(() => {",
+          "  console.log('${1:signal} changed:', this.${1:signal}());",
+          "  $0",
+          "});"
+        ],
+        "description": "Effect para reaccionar a cambios de Signals"
+      },
+      "Signal Service": {
+        "prefix": "ng-signal-service",
+        "body": [
+          "import { Injectable, signal, computed } from '@angular/core';",
+          "",
+          "@Injectable({",
+          "  providedIn: 'root'",
+          "})",
+          "export class ${1:Service}Service {",
+          "  private _state = signal<${2:StateType}>($3);",
+          "  ",
+          "  readonly state = computed(() => this._state());",
+          "  ",
+          "  updateState(newState: ${2:StateType}) {",
+          "    this._state.set(newState);",
+          "  }",
+          "  ",
+          "  updatePartialState(partialState: Partial<${2:StateType}>) {",
+          "    this._state.update(current => ({ ...current, ...partialState }));",
+          "  }",
+          "}"
+        ],
+        "description": "Servicio con gestión de estado usando Signals"
+      }
+    };
+
+    // 📄 3. Snippets para Control Flow
+    const controlFlowSnippets = {
+      "Angular @if": {
+        "prefix": "ng-if",
+        "body": [
+          "@if (${1:condition}) {",
+          "  $0",
+          "}"
+        ],
+        "description": "Control flow @if de Angular 20"
+      },
+      "Angular @if @else": {
+        "prefix": "ng-if-else",
+        "body": [
+          "@if (${1:condition}) {",
+          "  $2",
+          "} @else {",
+          "  $0",
+          "}"
+        ],
+        "description": "Control flow @if @else de Angular 20"
+      },
+      "Angular @for": {
+        "prefix": "ng-for",
+        "body": [
+          "@for (${1:item} of ${2:items}; track ${1}.${3:id}) {",
+          "  $0",
+          "} @empty {",
+          "  <p>No items available</p>",
+          "}"
+        ],
+        "description": "Control flow @for de Angular 20"
+      },
+      "Angular @switch": {
+        "prefix": "ng-switch",
+        "body": [
+          "@switch (${1:expression}) {",
+          "  @case (${2:value1}) {",
+          "    $3",
+          "  }",
+          "  @case (${4:value2}) {",
+          "    $5",
+          "  }",
+          "  @default {",
+          "    $0",
+          "  }",
+          "}"
+        ],
+        "description": "Control flow @switch de Angular 20"
+      }
+    };
+
+    // 📄 4. Snippets para Formularios
+    const formsSnippets = {
+      "Angular Typed Form": {
+        "prefix": "ng-typed-form",
+        "body": [
+          "import { FormBuilder, FormGroup, Validators } from '@angular/forms';",
+          "import { signal } from '@angular/core';",
+          "",
+          "interface ${1:Form}Data {",
+          "  ${2:field}: string;",
+          "}",
+          "",
+          "export class ${3:Component}Component {",
+          "  private fb = inject(FormBuilder);",
+          "  ",
+          "  ${4:form}: FormGroup<{",
+          "    ${2:field}: FormControl<string>;",
+          "  }> = this.fb.group({",
+          "    ${2:field}: ['', [Validators.required]]",
+          "  });",
+          "  ",
+          "  formData = signal<${1:Form}Data | null>(null);",
+          "  ",
+          "  onSubmit() {",
+          "    if (this.${4:form}.valid) {",
+          "      this.formData.set(this.${4:form}.value as ${1:Form}Data);",
+          "      $0",
+          "    }",
+          "  }",
+          "}"
+        ],
+        "description": "Formulario tipado con Signals de Angular 20"
+      }
+    };
+
+    // Escribir archivos de snippets
+    await fs.writeJson(path.join(snippetsDir, 'angular-20-components.json'), componentSnippets, { spaces: 2 });
+    await fs.writeJson(path.join(snippetsDir, 'angular-20-signals.json'), signalsSnippets, { spaces: 2 });
+    await fs.writeJson(path.join(snippetsDir, 'angular-20-control-flow.json'), controlFlowSnippets, { spaces: 2 });
+    await fs.writeJson(path.join(snippetsDir, 'angular-20-forms.json'), formsSnippets, { spaces: 2 });
+  }
+
+  async createSessionsStructure() {
+    console.log(chalk.yellow('\n📚 Creando estructura de sesiones del curso...\n'));
+
+    this.spinner.start('Generando 9 sesiones del curso...');
+
+    try {
+      // Crear directorio principal de sesiones en la raíz del repositorio
+      const sessionsBaseDir = path.join(this.courseDir, 'sesiones');
+      await fs.ensureDir(sessionsBaseDir);
+
+      // Definición de las 9 sesiones
+      const sessions = [
+        {
+          id: '01',
+          title: 'Fundamentos Modernos',
+          topics: ['Novedades Angular 20', 'Signals en Profundidad'],
+          description: 'Standalone Components, Signals, Control Flow'
+        },
+        {
+          id: '02', 
+          title: 'Change Detection y Directivas',
+          topics: ['Change Detection Avanzado', 'Directivas y Control Flow'],
+          description: 'Zoneless Angular, Performance, Directivas modernas'
+        },
+        {
+          id: '03',
+          title: 'Formularios y Arquitectura DI',
+          topics: ['Formularios Avanzados', 'Inyección de Dependencias'],
+          description: 'Typed Forms, Signals, Standalone APIs'
+        },
+        {
+          id: '04',
+          title: 'Routing y Optimización',
+          topics: ['Routing Avanzado', 'Optimización de Recursos'],
+          description: 'Functional Guards, NgOptimizedImage'
+        },
+        {
+          id: '05',
+          title: 'SSR e Hydration',
+          topics: ['SSR, Prerender e Hydration'],
+          description: 'Server-Side Rendering, Hydration incremental'
+        },
+        {
+          id: '06',
+          title: 'Testing y Arquitecturas',
+          topics: ['Testing Moderno', 'Arquitecturas Escalables', 'PWAs'],
+          description: 'Jest, Cypress, Microfrontends, PWA'
+        },
+        {
+          id: '07',
+          title: 'Estado Global e i18n',
+          topics: ['NgRx', 'Internacionalización', 'Librerías'],
+          description: 'Estado global, i18n, creación de librerías'
+        },
+        {
+          id: '08',
+          title: 'Librerías y Buenas Prácticas',
+          topics: ['Librerías Avanzadas', 'Buenas Prácticas'],
+          description: 'NPM, Documentación, CI/CD, Seguridad'
+        },
+        {
+          id: '09',
+          title: 'Migración y Proyecto Final',
+          topics: ['Migración Angular 17→20', 'Proyecto Final'],
+          description: 'Migración, Campus Virtual completo'
+        }
+      ];
+
+      // Crear estructura para cada sesión
+      for (const session of sessions) {
+        await this.createSessionStructure(sessionsBaseDir, session);
+      }
+
+      // Crear archivo índice de sesiones
+      await this.createSessionsIndex(sessionsBaseDir, sessions);
+
+      this.spinner.succeed('Estructura de 9 sesiones creada ✅');
+    } catch (error) {
+      this.spinner.fail('Error creando estructura de sesiones');
+      throw error;
+    }
+  }
+
+  async createSessionStructure(baseDir, session) {
+    const sessionDir = path.join(baseDir, `sesion-${session.id}-${session.title.toLowerCase().replace(/\s+/g, '-')}`);
+    
+    // Crear directorios
+    const dirs = [
+      'teoria',
+      'ejercicios',
+      'ejercicios/resueltos',
+      'codigo-ejemplos',
+      'recursos',
+      'campus-virtual-incremental'
+    ];
+
+    for (const dir of dirs) {
+      await fs.ensureDir(path.join(sessionDir, dir));
+    }
+
+    // README de la sesión
+    const sessionReadme = `# Sesión ${session.id}: ${session.title}
+
+## 📋 Información de la Sesión
+
+**Duración:** 3 horas  
+**Fecha:** Por definir  
+**Modalidad:** Presencial online (Zoom)
+
+## 🎯 Objetivos
+
+${session.description}
+
+## 📚 Temas Tratados
+
+${session.topics.map((topic, index) => `${index + 1}. **${topic}**`).join('\n')}
+
+## 📁 Estructura de Archivos
+
+\`\`\`
+sesion-${session.id}-${session.title.toLowerCase().replace(/\s+/g, '-')}/
+├── 📁 teoria/                     # Material teórico por tema
+├── 📁 ejercicios/                 # Ejercicios prácticos
+│   └── 📁 resueltos/              # Soluciones de ejercicios
+├── 📁 codigo-ejemplos/            # Ejemplos de código
+├── 📁 recursos/                   # Recursos adicionales
+└── 📁 campus-virtual-incremental/ # Evolución del proyecto
+\`\`\`
+
+## 🚀 Comandos de la Sesión
+
+\`\`\`bash
+# Iniciar sesión
+npm run session:start ${session.id}
+
+# Verificar setup
+npm run verify:setup
+
+# Resetear si es necesario
+npm run session:reset ${session.id}
+\`\`\`
+
+## 📦 Campus Virtual - Evolución
+
+En esta sesión el proyecto Campus Virtual evolucionará para incluir:
+
+${session.topics.map(topic => `- ✅ ${topic}`).join('\n')}
+
+## 🔗 Enlaces Útiles
+
+- [Angular Documentation](https://angular.dev)
+- [Documentación del Curso](../../docs/)
+- [Repositorio Completo](https://github.com/Imagina-Formacion/curso-angular-20-avanzado)
+
+---
+
+**Imagina Formación - Curso Angular 20 Avanzado**
+`;
+
+    await fs.writeFile(path.join(sessionDir, 'README.md'), sessionReadme);
+
+    // Configuración de la sesión
+    const sessionConfig = {
+      id: session.id,
+      title: session.title,
+      topics: session.topics,
+      duration: "3 horas",
+      objectives: session.topics,
+      prerequisites: session.id === '01' ? ['Node.js v20+', 'Angular CLI 20', 'VS Code'] : [`Sesión ${parseInt(session.id) - 1} completada`],
+      newDependencies: this.getSessionDependencies(session.id),
+      commands: this.getSessionCommands(session.id)
+    };
+
+    await fs.writeJson(path.join(sessionDir, 'session-config.json'), sessionConfig, { spaces: 2 });
+
+    // Crear archivo de ejercicios base
+    const exercisesContent = `# Ejercicios - Sesión ${session.id}
+
+## 🎯 Ejercicios Prácticos
+
+### Ejercicio 1: ${session.topics[0]}
+
+**Objetivo:** Implementar ${session.topics[0]} en el Campus Virtual
+
+**Pasos:**
+1. [ ] Paso 1
+2. [ ] Paso 2  
+3. [ ] Paso 3
+
+**Criterios de éxito:**
+- ✅ Criterio 1
+- ✅ Criterio 2
+
+${session.topics[1] ? `
+
+### Ejercicio 2: ${session.topics[1]}
+
+**Objetivo:** Implementar ${session.topics[1]} en el Campus Virtual
+
+**Pasos:**
+1. [ ] Paso 1
+2. [ ] Paso 2
+3. [ ] Paso 3
+
+**Criterios de éxito:**
+- ✅ Criterio 1  
+- ✅ Criterio 2
+` : ''}
+
+## 🚀 Comandos Útiles
+
+\`\`\`bash
+# Verificar progreso
+npm run verify:setup
+
+# Ejecutar tests
+npm test
+
+# Iniciar desarrollo
+npm start
+\`\`\`
+
+---
+
+**Tiempo estimado:** 45-60 minutos por ejercicio
+`;
+
+    await fs.writeFile(path.join(sessionDir, 'ejercicios', 'ejercicios.md'), exercisesContent);
+  }
+
+  getSessionDependencies(sessionId) {
+    const dependencies = {
+      '03': ['@angular/forms'],
+      '05': ['@angular/ssr'],
+      '06': ['@angular/service-worker'],
+      '07': ['@ngrx/store', '@ngrx/effects'],
+      '08': ['compodoc']
+    };
+    return dependencies[sessionId] || [];
+  }
+
+  getSessionCommands(sessionId) {
+    const commands = {
+      '05': ['ng add @angular/ssr'],
+      '06': ['ng add @angular/pwa'],
+      '07': ['ng add @ngrx/store']
+    };
+    return commands[sessionId] || [];
+  }
+
+  async createSessionsIndex(baseDir, sessions) {
+    const indexContent = `# Sesiones del Curso Angular 20 Avanzado
+
+## 📚 Índice de Sesiones
+
+${sessions.map(session => `
+### 📅 [Sesión ${session.id}: ${session.title}](./sesion-${session.id}-${session.title.toLowerCase().replace(/\s+/g, '-')}/)
+
+**Temas:** ${session.topics.join(' • ')}  
+**Descripción:** ${session.description}
+`).join('')}
+
+## 🎯 Progreso del Curso
+
+- [ ] Sesión 01: Fundamentos Modernos
+- [ ] Sesión 02: Change Detection y Directivas  
+- [ ] Sesión 03: Formularios y Arquitectura DI
+- [ ] Sesión 04: Routing y Optimización
+- [ ] Sesión 05: SSR e Hydration
+- [ ] Sesión 06: Testing y Arquitecturas
+- [ ] Sesión 07: Estado Global e i18n  
+- [ ] Sesión 08: Librerías y Buenas Prácticas
+- [ ] Sesión 09: Migración y Proyecto Final
+
+## 🚀 Comandos Globales
+
+\`\`\`bash
+# Verificar requisitos
+npm run check:requirements
+
+# Setup completo
+npm run setup:complete
+
+# Iniciar sesión específica
+npm run session:start 01
+
+# Verificar setup
+npm run verify:setup
+\`\`\`
+
+---
+
+**Imagina Formación - Curso Angular 20 Avanzado**
+`;
+
+    await fs.writeFile(path.join(baseDir, 'README.md'), indexContent);
   }
 
   compareVersions(version1, version2) {

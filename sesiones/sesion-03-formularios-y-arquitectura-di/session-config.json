@@ -1,0 +1,20 @@
+{
+  "id": "03",
+  "title": "Formularios y Arquitectura DI",
+  "topics": [
+    "Formularios Avanzados",
+    "Inyección de Dependencias"
+  ],
+  "duration": "3 horas",
+  "objectives": [
+    "Formularios Avanzados",
+    "Inyección de Dependencias"
+  ],
+  "prerequisites": [
+    "Sesión 2 completada"
+  ],
+  "newDependencies": [
+    "@angular/forms"
+  ],
+  "commands": []
+}
