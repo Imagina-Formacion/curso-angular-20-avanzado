@@ -31,9 +31,9 @@ export const routes: Routes = [
   // Rutas futuras (implementar en sesiones posteriores)
   // Las rutas específicas se implementarán progresivamente
 
-  // Ruta wildcard (debe ir al final)
+  // Ruta wildcard (debe ir al final) - redirigir al login por ahora
   {
     path: '**',
-    redirectTo: '/not-found'
+    redirectTo: '/login'
   }
 ];
