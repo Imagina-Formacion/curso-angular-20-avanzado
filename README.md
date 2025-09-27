@@ -101,7 +101,7 @@ git diff v0.0.0..v1.0.0 --name-only
 
 - [Angular Documentation](https://angular.dev)
 - [Angular Update Guide](https://update.angular.io)
-- [GitBook del Curso](pendiente-de-configurar)
+- [GitBook del Curso](https://sn4p-dev.gitbook.io/curso-angular-20-avanzado)
 
 ---
 
