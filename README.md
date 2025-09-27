@@ -47,6 +47,50 @@ git clone --branch v0.0.0 https://github.com/Imagina-Formacion/curso-angular-20-
 - **GitBook:** Documentación de procedimientos y clases
 - **Proyecto incremental:** Campus virtual que se desarrolla sesión a sesión
 
+## 🏷️ Estrategia de Tags - Para Estudiantes
+
+### Tags Oficiales del Curso
+- `v0.0.0` - Punto de partida para Sesión 1
+- `v1.0.0` - Resultado esperado tras completar Sesión 1
+- `v2.0.0` - Resultado esperado tras completar Sesión 2
+- `v3.0.0` - Resultado esperado tras completar Sesión 3
+- *(y así sucesivamente...)*
+
+### Tags Personales del Estudiante
+Al finalizar cada sesión, crear tu propio tag personal:
+
+```bash
+# Al terminar Sesión 1
+git tag v1.0.0-sesion1 -m "Mi implementación de la Sesión 1"
+
+# Al terminar Sesión 2
+git tag v2.0.0-sesion2 -m "Mi implementación de la Sesión 2"
+```
+
+### Comandos Útiles
+
+```bash
+# Empezar una sesión desde el punto oficial
+git checkout v0.0.0  # Para empezar Sesión 1
+git checkout v1.0.0  # Para empezar Sesión 2
+
+# Comparar tu trabajo con el resultado esperado
+git diff v1.0.0 v1.0.0-sesion1
+
+# Ver todas las versiones disponibles
+git tag -l
+
+# Ver diferencias entre versiones oficiales
+git diff v0.0.0..v1.0.0 --name-only
+```
+
+### Flujo de Trabajo Recomendado
+
+1. **Antes de cada sesión:** `git checkout v[X].0.0` (donde X es la sesión anterior)
+2. **Durante la sesión:** Implementar según GitBook
+3. **Al finalizar:** Crear tag personal `v[X+1].0.0-sesion[X+1]`
+4. **Verificar:** Comparar con tag oficial `v[X+1].0.0`
+
 ## 🔧 Herramientas Especiales
 
 - **n8n:** Para traducciones automáticas vía webhooks
