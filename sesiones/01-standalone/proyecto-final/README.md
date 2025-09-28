@@ -175,8 +175,8 @@ graph TD
 git clone https://github.com/Imagina-Formacion/curso-angular-20-avanzado.git
 cd curso-angular-20-avanzado
 
-# 2. Checkout a la rama de Sesión 1
-git checkout session-1-from-v0
+# 2. Checkout al tag de Sesión 1
+git checkout v1.0.0
 
 # 3. Instalar dependencias del curso
 npm install

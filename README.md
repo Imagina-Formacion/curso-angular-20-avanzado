@@ -32,6 +32,25 @@
 - **GitBook:** Documentación de procedimientos y clases
 - **Proyecto incremental:** Campus virtual que se desarrolla sesión a sesión
 
+## 📦 Instalación por Sesiones
+
+Cada sesión tiene su propio tag para garantizar la estabilidad del contenido:
+
+### Sesión 1: Standalone Components (v1.0.0)
+```bash
+git clone https://github.com/Imagina-Formacion/curso-angular-20-avanzado.git
+cd curso-angular-20-avanzado
+git checkout v1.0.0
+npm install
+npm run setup:complete
+```
+
+### Próximas sesiones
+- **Sesión 2:** Reactividad Avanzada → `v2.0.0`
+- **Sesión 3:** Inyección de Dependencias → `v3.0.0`
+- **...**
+- **Sesión 9:** Proyecto Final → `v9.0.0`
+
 ## 🔧 Herramientas Especiales
 
 - **n8n:** Para traducciones automáticas vía webhooks
