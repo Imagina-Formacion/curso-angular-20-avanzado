@@ -136,6 +136,12 @@ backup/
 screenshots/
 recordings/
 
+# Material del instructor - No visible para estudiantes
+.gitbook/
+docs/instructor/
+*.instructor.md
+material-gitbook/
+
 # OS generated files
 */.DS_Store
 */Thumbs.db
