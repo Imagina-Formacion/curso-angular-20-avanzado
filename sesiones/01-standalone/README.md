@@ -17,7 +17,7 @@ Al completar esta sesión, los estudiantes serán capaces de:
 ## 📚 Ejercicios Prácticos
 
 ### 1. 🔧 [Setup Inicial con Standalone](./ejercicios/setup-inicial/README.md)
-**Duración:** 30 minutos
+**Duración:** 15 minutos
 
 **¿Qué aprenderás?**
 - Fundamentos de componentes standalone
@@ -33,37 +33,37 @@ Al completar esta sesión, los estudiantes serán capaces de:
 
 ---
 
-### 2. 🧩 [Componentes Standalone Avanzados](./ejercicios/componentes-standalone/README.md)
-**Duración:** 45 minutos
+### 2. 🧩 [Comunicación entre Componentes Standalone](./ejercicios/componentes-standalone/README.md)
+**Duración:** 15 minutos
 
 **¿Qué aprenderás?**
-- Comunicación entre componentes standalone
-- Gestión de estado con signals
-- Servicios con standalone components
-- Patterns de composición avanzados
+- Comunicación padre-hijo con @Input/@Output
+- Interfaces para tipado seguro
+- EventEmitter para eventos
+- Arquitectura simple de componentes
 
 **Conceptos clave:**
-- Input/Output con standalone
-- Signal-based state management
-- Service injection patterns
-- Component composition
+- @Input() para datos hacia abajo
+- @Output() para eventos hacia arriba
+- EventEmitter básico
+- Standalone component imports
 
 ---
 
-### 3. 🛣️ [Routing Standalone](./ejercicios/routing-standalone/README.md)
-**Duración:** 50 minutos
+### 3. 🛣️ [Routing Básico Standalone](./ejercicios/routing-standalone/README.md)
+**Duración:** 15 minutos
 
 **¿Qué aprenderás?**
-- Routing moderno sin NgModules
-- Lazy loading con `loadComponent`
-- Guards funcionales
-- Providers routing modernos
+- Configuración básica de routing sin NgModules
+- provideRouter() en lugar de RouterModule
+- RouterOutlet, RouterLink y RouterLinkActive
+- Navegación simple entre páginas
 
 **Conceptos clave:**
-- `provideRouter()` configuration
-- `loadComponent` vs `loadChildren`
-- Functional guards con `inject()`
-- Route-level providers
+- provideRouter() básico
+- RouterOutlet para mostrar componentes
+- RouterLink para navegación
+- RouterLinkActive para estado visual
 
 ---
 
