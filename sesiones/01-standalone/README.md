@@ -228,6 +228,39 @@ La mayoría de las bibliotecas modernas ya soportan standalone. Las que no, se p
 
 ---
 
+## 🎓 Proyecto Final: Campus Virtual ESO
+
+### [📋 Proyecto Campus Virtual - Módulo Base](./proyecto-final/README.md)
+**Duración:** Integración de toda la sesión
+
+**¿Qué construirás?**
+- Aplicación completa de campus virtual para ESO
+- Arquitectura 100% standalone components
+- Sistema de autenticación con guards funcionales
+- Dashboard interactivo con métricas en tiempo real
+- Gestión de usuarios, cursos y estudiantes
+
+**Conceptos integrados:**
+- Todos los conceptos de la Sesión 1 aplicados
+- Estructura modular escalable
+- Performance optimization
+- Testing y documentación
+
+**🚀 Setup Automático:**
+```bash
+# Desde la raíz del proyecto
+npm run setup:complete
+```
+
+El script automático creará toda la estructura del Campus Virtual ESO con:
+- ✅ Proyecto Angular 20 configurado
+- ✅ Componentes standalone implementados
+- ✅ Routing moderno con guards
+- ✅ Datos de ejemplo listos
+- ✅ Documentación completa
+
+---
+
 ## 🎯 Próximos Pasos
 
 Después de completar esta sesión:

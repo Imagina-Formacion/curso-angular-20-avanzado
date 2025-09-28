@@ -9,11 +9,11 @@ const boxen = require('boxen');
 const inquirer = require('inquirer');
 
 const COURSE_CONFIG = {
-  projectName: 'campus-virtual-app',
-  projectDir: '00-proyecto-inicial',
+  projectName: 'campus-virtual-eso',
+  projectDir: '.',
   angularVersion: '18.0.0',
   requiredNodeVersion: '20.0.0',
-  requiredNpmVersion: '10.0.0'
+  requiredNpmVersion: '9.0.0'
 };
 
 class CourseSetup {
