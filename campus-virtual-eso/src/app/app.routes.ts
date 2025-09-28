@@ -28,6 +28,14 @@ export const routes: Routes = [
     title: 'Dashboard - Campus Virtual ESO'
   },
 
+  // Rutas de cursos (Sesión 2)
+  {
+    path: 'courses',
+    loadComponent: () => import('./features/courses/courses-list.component').then(m => m.CoursesListComponent),
+    canActivate: [secureGuard],
+    title: 'Cursos - Campus Virtual ESO'
+  },
+
   // Rutas futuras (implementar en sesiones posteriores)
   // Las rutas específicas se implementarán progresivamente
 

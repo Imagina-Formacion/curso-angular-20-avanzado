@@ -11,6 +11,7 @@
         <div class="current-time">
           {{ currentTime() | date:'medium' }}
         </div>
+        <app-notification-center></app-notification-center>
         <button class="profile-btn" (click)="goToProfile()" title="Ver perfil">
           👤 {{ currentUser()?.name }}
         </button>

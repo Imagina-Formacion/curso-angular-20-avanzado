@@ -38,13 +38,18 @@ export enum UserRole {
 export interface Course {
   id: string;
   name: string;
-  description: string;
-  teacherId: string;
-  students: string[];
-  subjects: Subject[];
+  code: string;
+  description?: string;
+  level: number; // 1-4 para ESO
+  teacher: string;
+  teacherId?: string;
+  studentsCount: number;
+  students?: string[];
+  subjects?: Subject[];
+  status: 'active' | 'pending' | 'completed';
   startDate: Date;
   endDate: Date;
-  isActive: boolean;
+  isActive?: boolean;
 }
 
 export interface Subject {

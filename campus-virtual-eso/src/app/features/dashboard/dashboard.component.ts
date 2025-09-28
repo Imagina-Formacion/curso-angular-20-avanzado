@@ -1,8 +1,10 @@
-import { Component, signal, computed, inject, OnInit } from '@angular/core';
+import { Component, signal, computed, inject, OnInit, ChangeDetectionStrategy, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
 import { AuthService } from '../../core/services/auth.service';
+import { NotificationService } from '../../core/services/notification.service';
+import { NotificationCenterComponent } from '../../shared/components/notification-center/notification-center.component';
 import { User, UserRole } from '../../core/models';
 
 interface DashboardCard {
@@ -26,12 +28,14 @@ interface RecentActivity {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NotificationCenterComponent],
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss']
+  styleUrls: ['./dashboard.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent implements OnInit {
   private readonly authService = inject(AuthService);
+  private readonly notificationService = inject(NotificationService);
   private readonly router = inject(Router);
 
   // Signals para el estado del dashboard
@@ -228,7 +232,17 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadRecentActivities();
-    this.startClock();
+
+    // Inicializar reloj
+    this._currentTime.set(new Date());
+    setInterval(() => {
+      this._currentTime.set(new Date());
+    }, 60000);
+
+    // Inicializar notificaciones de ejemplo tras un pequeño delay
+    setTimeout(() => {
+      this.notificationService.addMockNotifications();
+    }, 2000);
   }
 
   /**
@@ -295,14 +309,6 @@ export class DashboardComponent implements OnInit {
     this._recentActivities.set(mockActivities);
   }
 
-  /**
-   * Iniciar reloj en tiempo real
-   */
-  private startClock(): void {
-    setInterval(() => {
-      this._currentTime.set(new Date());
-    }, 1000);
-  }
 
   /**
    * Formatear fecha relativa

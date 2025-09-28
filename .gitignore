@@ -142,6 +142,9 @@ backup/
 screenshots/
 recordings/
 
+# Claude Code - Configuración personal del desarrollador
+CLAUDE.md
+
 # OS generated files
 */.DS_Store
 */Thumbs.db
