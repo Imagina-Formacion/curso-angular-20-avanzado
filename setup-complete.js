@@ -40,12 +40,13 @@ class CourseSetup {
     try {
       await this.checkPrerequisites();
       await this.promptUserChoices();
-      
+
       if (this.options.setupMode !== 'verify') {
         await this.setupProject();
         await this.installDependencies();
         await this.createProjectStructure();
         await this.createInitialFiles();
+        await this.installVSCodeSnippets();
       }
       
       this.showSuccessMessage();
@@ -339,6 +340,38 @@ class CourseSetup {
       this.spinner.succeed('VS Code configurado ✅');
     } catch (error) {
       this.spinner.warn('VS Code no configurado (no crítico)');
+    }
+  }
+
+  async installVSCodeSnippets() {
+    const os = require('os');
+    const homeDir = os.homedir();
+    const vscodeSnippetsDir = path.join(homeDir, '.vscode', 'snippets');
+
+    this.spinner.start('Instalando snippets de Angular 20...');
+
+    try {
+      // Crear directorio de snippets globales si no existe
+      await fs.ensureDir(vscodeSnippetsDir);
+
+      // Ruta al archivo de snippets de la sesión 1
+      const sourceSnippets = path.join(this.courseDir, 'sesiones', '01-standalone', 'snippets', 'sesion-01-snippets.code-snippets');
+      const targetSnippets = path.join(vscodeSnippetsDir, 'angular20-sesion01.code-snippets');
+
+      // Verificar que el archivo de snippets existe
+      if (await fs.pathExists(sourceSnippets)) {
+        // Copiar snippets a ubicación global
+        await fs.copy(sourceSnippets, targetSnippets);
+        this.spinner.succeed('Snippets de Angular 20 instalados ✅');
+        console.log(chalk.green('  → ng20-standalone, ng20-control-flow, ng20-bootstrap y más disponibles'));
+        console.log(chalk.gray('  → Usa TAB para expandir snippets en VS Code'));
+      } else {
+        this.spinner.warn('Snippets no encontrados (no crítico)');
+        console.log(chalk.yellow('  → Los snippets se pueden instalar manualmente después'));
+      }
+    } catch (error) {
+      this.spinner.warn('Snippets no instalados (no crítico)');
+      console.log(chalk.gray('  → Los snippets se pueden instalar manualmente después'));
     }
   }
 
