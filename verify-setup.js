@@ -15,9 +15,9 @@ class SetupVerifier {
     this.warnings = [];
     this.errors = [];
     this.requirements = {
-      node: '18.19.0',
-      npm: '10.0.0',
-      angularCli: '18.0.0', // Más estable que 20.0.0
+      node: '20.0.0',
+      npm: '9.0.0',
+      angularCli: '18.0.0', // Compatible con Angular 20
       git: '2.0.0'
     };
   }
@@ -73,17 +73,32 @@ class SetupVerifier {
     // Angular CLI
     await this.check('Angular CLI >= 18.0.0', async () => {
       try {
-        const output = execSync('ng version --json', { encoding: 'utf8', stdio: 'pipe' });
-        const data = JSON.parse(output);
-        const version = data.cli?.version;
+        // Intentar obtener versión de Angular CLI de forma más robusta
+        const output = execSync('ng version', { encoding: 'utf8', stdio: 'pipe' });
 
-        if (!version || this.compareVersions(version, this.requirements.angularCli) < 0) {
-          throw new Error(`Versión ${version || 'no encontrada'} es muy antigua. Requiere >= ${this.requirements.angularCli}`);
+        // Buscar la línea con Angular CLI version
+        const versionMatch = output.match(/Angular CLI:\s*(\d+\.\d+\.\d+)/);
+        const version = versionMatch ? versionMatch[1] : null;
+
+        if (!version) {
+          // Si no encontramos versión, intentar comando simple
+          const simpleVersion = execSync('ng --version', { encoding: 'utf8', stdio: 'pipe' });
+          const simpleMatch = simpleVersion.match(/(\d+\.\d+\.\d+)/);
+
+          if (simpleMatch && simpleMatch[1]) {
+            return `${simpleMatch[1]} ✅`;
+          } else {
+            throw new Error('Angular CLI instalado pero versión no identificada');
+          }
+        }
+
+        if (this.compareVersions(version, this.requirements.angularCli) < 0) {
+          throw new Error(`Versión ${version} es muy antigua. Requiere >= ${this.requirements.angularCli}`);
         }
         return `${version} ✅`;
       } catch (error) {
-        if (error.message.includes('not found')) {
-          throw new Error('Angular CLI no está instalado. Ejecutar: npm install -g @angular/cli');
+        if (error.message && error.message.includes('not found')) {
+          throw new Error('Angular CLI no está instalado. Ejecutar: npm install -g @angular/cli@latest');
         }
         throw error;
       }
@@ -299,7 +314,7 @@ class SetupVerifier {
     await this.check('Servidor de desarrollo', async () => {
       try {
         // Verificar que el servidor puede iniciar (sin ejecutarlo)
-        const child = execSync('timeout 10 ng serve --dry-run', {
+        execSync('timeout 10 ng serve --dry-run', {
           stdio: 'pipe',
           cwd: this.projectPath
         });

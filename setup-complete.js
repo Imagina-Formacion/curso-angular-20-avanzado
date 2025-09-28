@@ -87,17 +87,31 @@ class CourseSetup {
     this.spinner.start('Verificando Angular CLI...');
     try {
       try {
-        const output = execSync('ng version --json', { encoding: 'utf8', stdio: 'pipe' });
-        const data = JSON.parse(output);
-        const cliVersion = data.cli?.version;
-        
-        if (!cliVersion || this.compareVersions(cliVersion, COURSE_CONFIG.angularVersion) < 0) {
+        // Intentar obtener versión de Angular CLI de forma más robusta
+        const output = execSync('ng version', { encoding: 'utf8', stdio: 'pipe' });
+
+        // Buscar la línea con Angular CLI version
+        const versionMatch = output.match(/Angular CLI:\s*(\d+\.\d+\.\d+)/);
+        const cliVersion = versionMatch ? versionMatch[1] : null;
+
+        if (!cliVersion) {
+          // Si no encontramos versión, intentar comando simple
+          const simpleVersion = execSync('ng --version', { encoding: 'utf8', stdio: 'pipe' });
+          const simpleMatch = simpleVersion.match(/(\d+\.\d+\.\d+)/);
+
+          if (simpleMatch) {
+            this.spinner.succeed(`Angular CLI ${simpleMatch[1]} ✅`);
+          } else {
+            this.spinner.warn('Angular CLI encontrado pero versión no identificada');
+            await this.installAngularCLI();
+          }
+        } else if (this.compareVersions(cliVersion, COURSE_CONFIG.angularVersion) < 0) {
           this.spinner.warn(`Angular CLI ${cliVersion} desactualizado`);
           await this.updateAngularCLI();
         } else {
           this.spinner.succeed(`Angular CLI ${cliVersion} ✅`);
         }
-      } catch {
+      } catch (error) {
         this.spinner.warn('Angular CLI no encontrado');
         await this.installAngularCLI();
       }
