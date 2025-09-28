@@ -230,21 +230,34 @@ La mayoría de las bibliotecas modernas ya soportan standalone. Las que no, se p
 
 ## 🎓 Proyecto Final: Campus Virtual ESO
 
-### [📋 Proyecto Campus Virtual - Módulo Base](./proyecto-final/README.md)
 **Duración:** Integración de toda la sesión
 
-**¿Qué construirás?**
-- Aplicación completa de campus virtual para ESO
-- Arquitectura 100% standalone components
-- Sistema de autenticación con guards funcionales
-- Dashboard interactivo con métricas en tiempo real
-- Gestión de usuarios, cursos y estudiantes
+### 🎯 **¿Qué construirás?**
 
-**Conceptos integrados:**
-- Todos los conceptos de la Sesión 1 aplicados
-- Estructura modular escalable
-- Performance optimization
-- Testing y documentación
+Una plataforma educativa moderna para ESO que integra todos los conceptos de la Sesión 1:
+
+### ✨ **Características Principales**
+- 🚀 **Arquitectura Standalone**: Sin NgModules tradicionales
+- ⚡ **Lazy Loading**: Carga granular con `loadComponent`
+- 🔒 **Sistema de Autenticación**: Guards funcionales
+- 📱 **Responsive Design**: Mobile-first approach
+- 📊 **Dashboard Interactivo**: Métricas y estadísticas
+- 👥 **Gestión de Usuarios**: Estudiantes, profesores, administradores
+
+### 🎯 **Objetivos de Aprendizaje**
+Al completar este proyecto, habrás demostrado dominio en:
+- [x] Componentes standalone sin NgModules
+- [x] Lazy loading con `loadComponent`
+- [x] Guards funcionales con `inject()`
+- [x] Routing moderno con `provideRouter`
+- [x] Signals para gestión de estado
+- [x] Modern control flow (@if, @for, @switch)
+
+### 📦 **Stack Tecnológico**
+- **Frontend**: Angular 20 (Standalone Components)
+- **Styling**: SCSS + CSS Variables
+- **Icons**: Lucide Icons / Heroicons
+- **Testing**: Jest + Angular Testing Library
 
 **🚀 Setup Automático:**
 ```bash
