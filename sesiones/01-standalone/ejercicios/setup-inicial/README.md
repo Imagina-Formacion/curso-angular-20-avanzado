@@ -57,7 +57,8 @@ Para acelerar el desarrollo, usa estos snippets de VS Code:
 - **`ng20-bootstrap`**: Bootstrap application setup
 - **`ng20-control-flow`**: Control flow moderno (@if, @for)
 
-💡 **¿Primera vez usando snippets?** Lee la [guía completa](../../../../docs/snippets/como-usar-snippets.md)
+💡 **¿Primera vez usando snippets?**
+En VS Code, escribe el prefijo (ej: `ng20-standalone`) y presiona Tab para expandir.
 
 ### 📦 Paso 1: Setup del Proyecto
 

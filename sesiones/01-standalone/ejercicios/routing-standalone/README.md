@@ -70,7 +70,8 @@ Para acelerar el desarrollo, usa estos snippets de VS Code:
 - **`ng20-guard`**: Guard funcional
 - **`ng20-lazy-route`**: Ruta con lazy loading
 
-💡 **¿Primera vez usando snippets?** Lee la [guía completa](../../../../docs/snippets/como-usar-snippets.md)
+💡 **¿Primera vez usando snippets?**
+En VS Code, escribe el prefijo (ej: `ng20-routing`) y presiona Tab para expandir.
 
 ### 📦 Paso 1: Setup del Proyecto
 
