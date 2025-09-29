@@ -1,5 +1,6 @@
 import { Component, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { UserRole } from '../../core/models';
 
@@ -97,7 +98,7 @@ import { UserRole } from '../../core/models';
           <h2>⚡ Acciones Rápidas</h2>
           <div class="action-buttons">
             <button class="action-btn">📅 Horario</button>
-            <button class="action-btn">📝 Tareas</button>
+            <button class="action-btn" (click)="navigateToTasks()">📝 Tareas</button>
             <button class="action-btn">📊 Reportes</button>
             <button class="action-btn">⚙️ Configuración</button>
           </div>
@@ -249,7 +250,7 @@ import { UserRole } from '../../core/models';
     // Exponer UserRole enum para usar en template
     readonly UserRole = UserRole;
 
-    constructor(public authService: AuthService) {
+    constructor(public authService: AuthService, private router: Router) {
       this.currentUser = this.authService.currentUser;
       this.roleDisplayName = computed(() => {
         const user = this.currentUser();
@@ -267,5 +268,9 @@ import { UserRole } from '../../core/models';
 
     logout(): void {
       this.authService.logout();
+    }
+
+    navigateToTasks(): void {
+      this.router.navigate(['/tasks']);
     }
   }
