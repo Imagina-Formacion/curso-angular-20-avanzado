@@ -1,0 +1,44 @@
+/* Estilos globales del Campus Virtual ESO */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.5;
+  color: #2d3748;
+  background-color: #f7fafc;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input {
+  font-family: inherit;
+}
+
+/* Clases utilitarias */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.error {
+  color: #e53e3e;
+}
+
+.success {
+  color: #38a169;
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
+  }
+}

@@ -45,9 +45,17 @@ npm install
 npm run setup:complete
 ```
 
+### Sesión 2: Arquitectura Avanzada (v1.0.0)
+```bash
+git checkout v1.0.0-temporal
+npm install
+npm run setup:complete
+```
+
 ### Próximas sesiones
-- **Sesión 2:** Reactividad Avanzada → `v2.0.0`
-- **Sesión 3:** Inyección de Dependencias → `v3.0.0`
+- **Sesión 3:** Componentes Avanzados → `v1.2.0`
+- **Sesión 4:** Testing y Calidad → `v1.3.0`
+- **Sesión 5:** Deployment y DevOps → `v2.0.0`
 - **...**
 - **Sesión 9:** Proyecto Final → `v9.0.0`
 
