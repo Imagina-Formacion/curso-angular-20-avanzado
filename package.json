@@ -7,7 +7,10 @@
     "setup:complete": "node setup-complete.js",
     "verify:setup": "node verify-setup.js",
     "setup": "node setup-complete.js",
-    "verify": "node verify-setup.js"
+    "verify": "node verify-setup.js",
+    "verify:exercise": "node sesiones/01-fundamentos-modernos/ejercicios/verify.js",
+    "verify:all": "node sesiones/01-fundamentos-modernos/ejercicios/verify.js all",
+    "verify:help": "node sesiones/01-fundamentos-modernos/ejercicios/verify.js help"
   },
   "keywords": [
     "angular",
